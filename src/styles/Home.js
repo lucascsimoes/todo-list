@@ -60,6 +60,7 @@ export const CreateList = styled.button `
     opacity: .6;
     cursor: pointer;
     margin-top: 20px;
+    user-select: none;
 
     &:hover {
         background: var(--hover-secondary);
@@ -112,7 +113,7 @@ export const ModalContainer = styled.div `
     button {
         max-width: 60%;
         width: 100%;
-        padding: 12px;
+        padding: 14px;
         border: none;
         border-radius: 10px;
         margin-block: 50px 20px;
@@ -160,14 +161,73 @@ export const ListItemsContainer = styled.main `
     width: 100%;
     height: 100dvh;
     padding: 80px;
+
+    input {
+        border: 1px solid var(--terciary);
+        background-color: transparent;
+        padding: 20px;
+        width: 100%;
+        outline: none;
+        caret-color: #fff;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 15px;
+        margin-top: 50px;
+
+        & + p {
+            color: white;
+            text-align: center;
+        }
+    }
 `
 
 export const Title = styled.header `
     display: flex;
     align-items: center;
+    gap: 40px;
     color: #fff;
 
     .date {
         text-align: center;
+    }
+
+    h2 {
+        opacity: .6;
+    }
+`
+
+
+
+
+
+export const CalendarContainer = styled.aside `
+    max-width: 450px;
+    width: 100dvw;
+    height: 100dvh;
+    background: #252525;
+    padding: 30px;
+
+    * {
+        color: #fff !important;
+    }
+
+    .css-jgls56-MuiButtonBase-root-MuiPickersDay-root:not(.Mui-selected) {
+        border: 1px solid var(--primary);
+    }
+
+    .css-1u23akw-MuiButtonBase-root-MuiPickersDay-root.Mui-selected,
+    .css-jgls56-MuiButtonBase-root-MuiPickersDay-root.Mui-selected {
+        background: var(--primary) !important;
+        color: #000 !important;
+    }
+
+    .css-1u23akw-MuiButtonBase-root-MuiPickersDay-root {
+        background: transparent;
+        transition: background .2s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+        &:hover {
+            background: var(--hover-secondary);
+            transition: background .2s cubic-bezier(0.075, 0.82, 0.165, 1);
+        }
     }
 `

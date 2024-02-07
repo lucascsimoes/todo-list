@@ -6,24 +6,32 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import 'dayjs/locale/pt-br';
 
+import Modal from '@mui/material/Modal';
 import dayjs from 'dayjs';
 
 import List from './components/List/List';
-
-import Modal from '@mui/material/Modal';
-
-import { motion, AnimatePresence, useCycle } from 'framer-motion';
+import Task from './components/Task/Task';
+import NoTask from './components/NoTasks/NoTasks';
 
 function App() {
 
   const input = useRef(null)
 
+  const [date, setDate] = useState(dayjs().locale("pt-br"))
+
+  const [quantity, setQuantity] = useState(0)
+
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false);
 
-  const [lists, setLists] = useState(["Casa", "Estudo", "Importante"])
-  const [selectedList, setSelectedList] = useState("")
+  const [lists, setLists] = useState({
+    ["Casa"]: [],
+    ["Estudo"]: [],
+    ["Importante"]: []
+  })
+
+  const [selectedList, setSelectedList] = useState(Object.keys(lists)[0])
   const handleSelect = (value) => {
     setSelectedList(value)
   }
@@ -35,12 +43,12 @@ function App() {
     setShowInput(state)
   }
 
-  function checkIfSubmited(e) {
+  function checkIfSubmitedList(e) {
     if (e.key === "Enter") {
-      if (lists.find(item => item === e.target.value) === undefined) {
+      if (Object.keys(lists).find(item => item === e.target.value) === undefined) {
         if (e.target.value !== "") {
-          setLists(oldValues => [...oldValues, e.target.value])
-          console.log(lists)
+          lists[e.target.value] = []
+          setLists({ ...lists })
         }
         
         setShowInput(false)
@@ -51,13 +59,33 @@ function App() {
     }
   }
 
+  function checkIfSubmitedTask(e) {
+    if (e.key === "Enter") {
+      const newList = {...lists}
+
+      setQuantity(quantity + 1)
+
+      newList[selectedList].push({
+        id: quantity,
+        task: e.target.value,
+        date: date,
+        isDone: false
+      })
+
+      setLists(newList)
+
+      e.target.value = ""
+    }
+  }
+
   const deleteList = () => {
     handleClose()
-    setLists(oldValues => oldValues.filter(item => item !== selectedList))
+    delete lists[selectedList]
+    setSelectedList(Object.keys(lists)[0])
   }
 
   useEffect(() => {
-    setSelectedList(lists[0])
+    setSelectedList(Object.keys(lists)[0])
   }, [])
 
   useEffect(() => {
@@ -72,8 +100,43 @@ function App() {
     }
   }, [showInput])
 
-
   const months = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
+
+  function changeTaskState(task, value) {
+    const newList = {...lists}
+    const index = newList[selectedList].findIndex(item => item.id === task);
+
+    if (index !== -1) newList[selectedList][index].isDone = value
+
+    setLists(newList);
+  }
+
+  function deleteTask(task) {
+    const newList = { ...lists };
+
+    newList[selectedList] = newList[selectedList].filter(item => item.id !== task);
+
+    setLists(newList);
+  }
+
+  function filterByDate() {
+    console.log(new Date(date.$d).toDateString())
+    const newList = { ...lists };
+
+    newList[selectedList] = newList[selectedList].filter(item => {
+      const itemDate = new Date(item.date).toDateString();
+      const filterDate = new Date(date.$d).toDateString();
+      return itemDate === filterDate;
+    });
+
+    return newList;
+  }
+
+  console.log(lists)
+
+  useEffect(() => {
+    filterByDate()
+  }, [date])
 
   return (
     <>
@@ -84,7 +147,7 @@ function App() {
         </div>
 
         <h4> Minhas listas </h4>
-        { lists.map((item, key) => (
+        { Object.keys(lists).map((item, key) => (
           <List 
             key={key}
             name={item}
@@ -95,7 +158,7 @@ function App() {
         )) }
 
         { showInput &&
-          <input ref={input} placeholder='Nome da lista' onKeyDown={checkIfSubmited} onBlur={() => handleInput(false)}/>
+          <input ref={input} placeholder='Nome da lista' onKeyDown={checkIfSubmitedList} onBlur={() => handleInput(false)}/>
         }
 
         { listCreateError &&
@@ -138,14 +201,43 @@ function App() {
       <Styled.ListItemsContainer>
         <Styled.Title>
           <div className='date'>
-              <h1> { months[dayjs().locale("pt-br").month()][0] + months[dayjs().locale("pt-br").month()][1] + months[dayjs().locale("pt-br").month()][2] } </h1>
-              <h1> { new Date().getDate() } </h1>
+              <h1> { months[date.$M][0] + months[date.$M][1] + months[date.$M][2] } </h1>
+              <h1> { date.$D } </h1>
           </div>
 
-          <h1> Boa tarde </h1>
+          <div>
+            <h1> { new Date().getHours() < 12 ? "Bom dia" : new Date().getHours() > 17 ? "Boa noite" : "Boa tarde" } </h1>
+            <h2> Quais são os seus planos para hoje? </h2>
+          </div>
         </Styled.Title>
-      </Styled.ListItemsContainer>
 
+        <input placeholder='Adicionar tarefa' onKeyDown={checkIfSubmitedTask}/>
+      
+        { lists[selectedList] === undefined || lists[selectedList].length === 0 ?
+          <NoTask/>
+          :
+          lists[selectedList].map((item, key) => (
+            <Task
+              key={key}
+              id={item.id}
+              description={item.task}
+              date={item.date}one
+              isDone={item.isDone}
+              taskState={changeTaskState}
+              remove={deleteTask}
+            />
+          )) 
+        }
+      </Styled.ListItemsContainer>
+      
+
+
+
+      <Styled.CalendarContainer>
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
+          <DateCalendar value={date} onChange={(newValue) => setDate(newValue)}/>
+        </LocalizationProvider>
+      </Styled.CalendarContainer>
     </>
   );
 }
