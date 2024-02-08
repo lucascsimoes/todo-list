@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const ListContainer = styled.aside `
+export const ListContainer = styled.aside`
     max-width: 300px;
     width: 100dvw;
     height: 100dvh;
@@ -27,13 +27,6 @@ export const ListContainer = styled.aside `
         }
     }
 
-
-    h4 {
-        color: white;
-        font-weight: 500;
-        margin-bottom: 20px;
-    }
-
     input {
         border: 1px solid var(--terciary);
         background-color: transparent;
@@ -47,7 +40,7 @@ export const ListContainer = styled.aside `
     }
 `
 
-export const CreateList = styled.button `
+export const CreateList = styled.button`
     display: flex;
     align-items: center;
     width: 100%;
@@ -83,7 +76,7 @@ export const CreateList = styled.button `
     }
 `
 
-export const ModalContainer = styled.div `
+export const ModalContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -132,7 +125,7 @@ export const ModalContainer = styled.div `
     }
 `
 
-export const CreateError = styled.div `
+export const CreateError = styled.div`
     display: flex;
     align-items: center;
     gap: 10px;
@@ -157,7 +150,7 @@ export const CreateError = styled.div `
 
 
 
-export const ListItemsContainer = styled.main `
+export const ListItemsContainer = styled.main`
     width: 100%;
     height: 100dvh;
     padding: 80px;
@@ -181,7 +174,7 @@ export const ListItemsContainer = styled.main `
     }
 `
 
-export const Title = styled.header `
+export const Title = styled.header`
     display: flex;
     align-items: center;
     gap: 40px;
@@ -200,15 +193,24 @@ export const Title = styled.header `
 
 
 
-export const CalendarContainer = styled.aside `
+export const CalendarContainer = styled.aside`
     max-width: 450px;
     width: 100dvw;
     height: 100dvh;
     background: #252525;
-    padding: 30px;
+    padding: 50px;
 
     * {
         color: #fff !important;
+    }
+
+    .css-innj4t-MuiPickersYear-yearButton.Mui-selected {
+        background: var(--primary) !important;
+        color: #000 !important;
+    }
+
+    .css-1u23akw-MuiButtonBase-root-MuiPickersDay-root.hasTask {
+        background: var(--terciary);
     }
 
     .css-jgls56-MuiButtonBase-root-MuiPickersDay-root:not(.Mui-selected) {

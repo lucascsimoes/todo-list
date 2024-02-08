@@ -27,3 +27,9 @@ html, body {
 body #root {
   display: flex;
 }
+
+h4.subtitle {
+  color: white;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
